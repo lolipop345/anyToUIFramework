@@ -12,6 +12,7 @@ The plugin's core function is to take selected UI elements in Roblox Studio and 
 4. **Legacy** (Classic vanilla instance creation without reactive UI tools)
 
 ## Core Development Rules
+- **Objective Perspective**: You must maintain strict objectivity throughout the entire development process. Do not make biased assumptions or subjective design choices; base all logic purely on efficiency, facts, and established coding standards.
 - **Modularity First**: The project architecture must remain strictly modular. You MUST heavily utilize the modules provided in the `Library/` directory.
 - **Output Quality**: The generated code (and the plugin's internal code) must be exceptionally readable, highly modular, and strictly avoid any unnecessary or inefficient loops.
 - **Editor-Only Execution**: The plugin and its generation logic must function entirely in Roblox Studio's Edit mode. It should only generate static builder code and must not operate during runtime.
