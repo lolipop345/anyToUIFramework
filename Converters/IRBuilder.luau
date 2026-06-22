@@ -24,9 +24,7 @@ function IRBuilder.build(instance)
 	if processedCount % 50 == 0 then
 		task.wait()
 	end
-	
-	print("--- QA TEST: YENI IRBUILDER KODU CALISIYOR ---")
-	
+		
 	if instance:IsA("LuaSourceContainer") then
 		local source = ""
 		pcall(function() source = instance.Source end)

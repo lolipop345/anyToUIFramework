@@ -49,13 +49,28 @@ local function traverseDeepCollect(nodes, currentPath, diffs, baseProps)
 	end
 	
 	-- Recurse children
-	for childIdx, firstChild in ipairs(firstNode.Children) do
-		local childNodes = {}
-		for _, node in ipairs(nodes) do
-			table.insert(childNodes, node.Children[childIdx])
+	local children = firstNode.Children
+	if type(children) == "table" then
+		for childIdx = 1, #children do
+			local firstChild = children[childIdx]
+			local childNodes = {}
+			local valid = true
+			
+			for i = 1, #nodes do
+				local node = nodes[i]
+				if type(node.Children) == "table" and node.Children[childIdx] then
+					table.insert(childNodes, node.Children[childIdx])
+				else
+					valid = false
+					break
+				end
+			end
+			
+			if valid then
+				local nextPath = (currentPath == "" and firstChild.Name) or (currentPath .. "_" .. firstChild.Name)
+				traverseDeepCollect(childNodes, nextPath, diffs, baseProps)
+			end
 		end
-		local nextPath = (currentPath == "" and firstChild.Name) or (currentPath .. "_" .. firstChild.Name)
-		traverseDeepCollect(childNodes, nextPath, diffs, baseProps)
 	end
 end
 
@@ -86,10 +101,14 @@ local function buildComponentTemplate(firstNode, diffs, currentPath)
 		end
 	end
 	
-	for childIdx, childNode in ipairs(firstNode.Children) do
-		local nextPath = (currentPath == "" and childNode.Name) or (currentPath .. "_" .. childNode.Name)
-		local childTemplate = buildComponentTemplate(childNode, diffs, nextPath)
-		table.insert(template.Children, childTemplate)
+	local children = firstNode.Children
+	if type(children) == "table" then
+		for childIdx = 1, #children do
+			local childNode = children[childIdx]
+			local nextPath = (currentPath == "" and childNode.Name) or (currentPath .. "_" .. childNode.Name)
+			local childTemplate = buildComponentTemplate(childNode, diffs, nextPath)
+			table.insert(template.Children, childTemplate)
+		end
 	end
 	
 	return template
@@ -106,7 +125,7 @@ function ComponentExtractor.extract(rootNodes)
 		table.insert(structureGroups[hash], node)
 		
 		if node.Children then
-			for _, child in ipairs(node.Children) do
+			for _, child in ipairs(node.Children or {}) do
 				collectCandidates(child)
 			end
 		end
@@ -198,7 +217,7 @@ function ComponentExtractor.extract(rootNodes)
 			Children = {}
 		}
 		
-		for _, child in ipairs(node.Children) do
+		for _, child in ipairs(node.Children or {}) do
 			local childNode = rebuildTree(child)
 			if childNode then
 				table.insert(newNode.Children, childNode)
