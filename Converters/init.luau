@@ -4,7 +4,7 @@ local Converters = {
 	React = require(script:WaitForChild("ReactConverter")),
 	Fusion2 = require(script:WaitForChild("Fusion2Converter")),
 	Fusion3 = require(script:WaitForChild("Fusion3Converter")),
-	Legacy = require(script:WaitForChild("LegacyConverter")),
+	NativeLuau = require(script:WaitForChild("NativeLuauConverter")),
 	PropertyHelper = require(script:WaitForChild("PropertyHelper")),
 }
 
