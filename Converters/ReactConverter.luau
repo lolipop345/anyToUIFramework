@@ -3,9 +3,9 @@ local DependencyHelper = require(script.Parent:WaitForChild("DependencyHelper"))
 local IRBuilder = require(script.Parent:WaitForChild("IRBuilder"))
 local ComponentExtractor = require(script.Parent:WaitForChild("ComponentExtractor"))
 
-local VideConverter = {}
+local ReactConverter = {}
 
-local function generateVideCode(node, indentLevel)
+local function generateReactCode(node, indentLevel, parentChildNames)
 	local indent = string.rep("\t", indentLevel)
 	local nextIndent = string.rep("\t", indentLevel + 1)
 	
@@ -22,7 +22,7 @@ local function generateVideCode(node, indentLevel)
 	end
 	
 	local code = {}
-	table.insert(code, string.format('%svide.create %q {', indent, node.ClassName))
+	table.insert(code, string.format('%sReact.createElement(%q, {', indent, node.ClassName))
 	
 	local propsAdded = 0
 	for propName, val in pairs(node.Properties) do
@@ -37,21 +37,42 @@ local function generateVideCode(node, indentLevel)
 	
 	local children = node.Children
 	if #children > 0 then
-		if propsAdded > 0 then
-			table.insert(code, "")
+		table.insert(code, string.format('%s}, {', indent))
+		
+		local childNames = {}
+		for _, child in ipairs(children) do
+			local baseName = child.Name
+			local uniqueName = baseName
+			local suffix = 1
+			while childNames[uniqueName] do
+				uniqueName = baseName .. tostring(suffix)
+				suffix = suffix + 1
+			end
+			childNames[uniqueName] = true
+			
+			local childCode = generateReactCode(child, indentLevel + 1, childNames)
+			
+			local firstLineBreak = childCode:find("\n")
+			if firstLineBreak then
+				local firstLine = childCode:sub(1, firstLineBreak - 1)
+				local rest = childCode:sub(firstLineBreak)
+				local trimmedFirst = firstLine:match("^%s*(.-)$")
+				table.insert(code, string.format('%s[%q] = %s%s,', nextIndent, uniqueName, trimmedFirst, rest))
+			else
+				local trimmed = childCode:match("^%s*(.-)$")
+				table.insert(code, string.format('%s[%q] = %s,', nextIndent, uniqueName, trimmed))
+			end
 		end
 		
-		for i, child in ipairs(children) do
-			local childCode = generateVideCode(child, indentLevel + 1)
-			table.insert(code, childCode .. ",")
-		end
+		table.insert(code, string.format('%s})', indent))
+	else
+		table.insert(code, string.format('%s})', indent))
 	end
 	
-	table.insert(code, string.format('%s}', indent))
 	return table.concat(code, "\n")
 end
 
-function VideConverter.Convert(instances)
+function ReactConverter.Convert(instances)
 	if typeof(instances) ~= "table" then
 		instances = {instances}
 	end
@@ -67,12 +88,12 @@ function VideConverter.Convert(instances)
 	local newRoots, components = ComponentExtractor.extract(rootNodes)
 	
 	local results = {}
-	table.insert(results, DependencyHelper.resolve("vide"))
+	table.insert(results, DependencyHelper.resolve("React"))
 	table.insert(results, "")
 	
 	for _, comp in ipairs(components) do
 		table.insert(results, string.format("local function %s(props)", comp.Name))
-		local compCode = generateVideCode(comp.RootNode, 1)
+		local compCode = generateReactCode(comp.RootNode, 1, {})
 		table.insert(results, string.format("\treturn %s", compCode:match("^%s*(.-)$")))
 		table.insert(results, "end")
 		table.insert(results, "")
@@ -80,12 +101,14 @@ function VideConverter.Convert(instances)
 	
 	table.insert(results, "return function()")
 	
+	local rootCodes = {}
 	for _, node in ipairs(newRoots) do
-		table.insert(results, generateVideCode(node, 1))
+		table.insert(rootCodes, generateReactCode(node, 1, {}):sub(2))
 	end
 	
+	table.insert(results, "\treturn " .. table.concat(rootCodes, ",\n\t\t"))
 	table.insert(results, "end")
 	return table.concat(results, "\n")
 end
 
-return VideConverter
+return ReactConverter

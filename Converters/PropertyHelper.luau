@@ -68,7 +68,13 @@ function PropertyHelper.formatValue(value)
 		if value == math.floor(value) then
 			return tostring(value)
 		end
-		return tostring(math.round(value * 1000) / 1000)
+		
+		if math.abs(value - math.round(value)) < 0.001 then
+			return tostring(math.round(value))
+		end
+		
+		local rounded = math.round(value * 1000) / 1000
+		return tostring(rounded)
 	elseif t == "boolean" then
 		return tostring(value)
 	elseif t == "UDim2" then
@@ -84,6 +90,32 @@ function PropertyHelper.formatValue(value)
 		return string.format("Color3.fromRGB(%d, %d, %d)", math.round(value.R * 255), math.round(value.G * 255), math.round(value.B * 255))
 	elseif t == "Vector2" then
 		return string.format("Vector2.new(%s, %s)", PropertyHelper.formatValue(value.X), PropertyHelper.formatValue(value.Y))
+	elseif t == "Vector3" then
+		return string.format("Vector3.new(%s, %s, %s)", PropertyHelper.formatValue(value.X), PropertyHelper.formatValue(value.Y), PropertyHelper.formatValue(value.Z))
+	elseif t == "Rect" then
+		return string.format("Rect.new(%s, %s, %s, %s)", PropertyHelper.formatValue(value.Min.X), PropertyHelper.formatValue(value.Min.Y), PropertyHelper.formatValue(value.Max.X), PropertyHelper.formatValue(value.Max.Y))
+	elseif t == "Font" then
+		return string.format("Font.new(%q, Enum.FontWeight.%s, Enum.FontStyle.%s)", value.Family, value.Weight.Name, value.Style.Name)
+	elseif t == "ColorSequence" then
+		if #value.Keypoints == 1 or (#value.Keypoints == 2 and value.Keypoints[1].Value == value.Keypoints[2].Value) then
+			return string.format("ColorSequence.new(%s)", PropertyHelper.formatValue(value.Keypoints[1].Value))
+		end
+		local kps = {}
+		for _, kp in ipairs(value.Keypoints) do
+			table.insert(kps, string.format("ColorSequenceKeypoint.new(%s, %s)", PropertyHelper.formatValue(kp.Time), PropertyHelper.formatValue(kp.Value)))
+		end
+		return string.format("ColorSequence.new({\n\t\t%s\n\t})", table.concat(kps, ",\n\t\t"))
+	elseif t == "NumberSequence" then
+		if #value.Keypoints == 1 or (#value.Keypoints == 2 and value.Keypoints[1].Value == value.Keypoints[2].Value) then
+			return string.format("NumberSequence.new(%s)", PropertyHelper.formatValue(value.Keypoints[1].Value))
+		end
+		local kps = {}
+		for _, kp in ipairs(value.Keypoints) do
+			table.insert(kps, string.format("NumberSequenceKeypoint.new(%s, %s, %s)", PropertyHelper.formatValue(kp.Time), PropertyHelper.formatValue(kp.Value), PropertyHelper.formatValue(kp.Envelope)))
+		end
+		return string.format("NumberSequence.new({\n\t\t%s\n\t})", table.concat(kps, ",\n\t\t"))
+	elseif t == "NumberRange" then
+		return string.format("NumberRange.new(%s, %s)", PropertyHelper.formatValue(value.Min), PropertyHelper.formatValue(value.Max))
 	elseif t == "EnumItem" then
 		return tostring(value)
 	end

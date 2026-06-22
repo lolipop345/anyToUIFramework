@@ -48,7 +48,7 @@ local function App(props)
 		StudioService:CopyToClipboard(text)
 	end
 	
-	local convertersList = {"Roact", "Fusion2", "Fusion3", "Vide"}
+	local convertersList = {"React", "Roact", "Fusion2", "Fusion3", "Vide", "Legacy"}
 	
 	return React.createElement(StudioComponents.Background, {
 		Size = UDim2.fromScale(1, 1),
