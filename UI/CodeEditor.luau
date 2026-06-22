@@ -4,41 +4,48 @@ local Highlighter = require(script.Parent.Parent.Library.Highlighter)
 local usePlugin = require(script.Parent.Parent.Library.studiocomponents.Hooks.usePlugin)
 
 local function CodeEditor(props)
-	local textRef = React.useRef(nil)
-	local theme = StudioComponents.useTheme()
-	
-	local code = props.Code or ""
-	local displayCode = code
-	if #displayCode > 150000 then
-		displayCode = string.sub(displayCode, 1, 150000) .. "\n\n-- [WARNING: Code truncated for UI preview due to length limits. Use 'Export' to view full source.]"
-	end
-	
-	local instanceName = props.InstanceName or "ScreenGui"
-	local converterName = props.ConverterName or "Roact"
-	local generationTimeMs = props.GenerationTimeMs or 0
-	local plugin = usePlugin()
-	
-	React.useEffect(function()
-		local cleanup
-		if textRef.current then
-			cleanup = Highlighter.highlight({
-				textObject = textRef.current,
-				src = displayCode,
-				forceUpdate = true
-			})
-		end
-		
-		return function()
-			if cleanup then
-				cleanup()
-			end
-		end
+	local richTextLines = React.useMemo(function()
+		return Highlighter.buildRichTextLines({ src = displayCode })
 	end, {displayCode})
-
-	local lines = string.split(displayCode, "\n")
-	local lineNumbers = ""
-	for i = 1, #lines do
-		lineNumbers = lineNumbers .. tostring(i) .. "\n"
+	
+	local contentChildren = {
+		Padding = React.createElement("UIPadding", {
+			PaddingTop = UDim.new(0, 5),
+			PaddingBottom = UDim.new(0, 5),
+		}),
+		Layout = React.createElement("UIListLayout", {
+			SortOrder = Enum.SortOrder.LayoutOrder,
+			FillDirection = Enum.FillDirection.Vertical,
+		})
+	}
+	
+	for i, richLine in ipairs(richTextLines) do
+		contentChildren["Row_" .. i] = React.createElement("Frame", {
+			Size = UDim2.new(1, 0, 0, 16),
+			BackgroundTransparency = 1,
+			LayoutOrder = i,
+		}, {
+			LineNum = React.createElement("TextLabel", {
+				Size = UDim2.new(0, 35, 1, 0),
+				BackgroundTransparency = 1,
+				Text = tostring(i),
+				TextColor3 = theme:GetColor(Enum.StudioStyleGuideColor.DimmedText),
+				TextXAlignment = Enum.TextXAlignment.Right,
+				Font = Enum.Font.Code,
+				TextSize = 14,
+			}),
+			CodeText = React.createElement("TextLabel", {
+				Size = UDim2.new(1, -55, 1, 0),
+				Position = UDim2.new(0, 55, 0, 0),
+				BackgroundTransparency = 1,
+				Text = richLine,
+				RichText = true,
+				TextColor3 = theme:GetColor(Enum.StudioStyleGuideColor.MainText),
+				TextXAlignment = Enum.TextXAlignment.Left,
+				Font = Enum.Font.Code,
+				TextSize = 14,
+			})
+		})
 	end
 	
 	return React.createElement("Frame", {
@@ -91,12 +98,8 @@ local function CodeEditor(props)
 		Scroll = React.createElement(StudioComponents.ScrollFrame, {
 			Size = UDim2.new(1, 0, 1, -33),
 			Position = UDim2.new(0, 0, 0, 33),
-			CanvasSize = UDim2.new(2, 0, 0, math.max(400, #lines * 16 + 20)),
+			CanvasSize = UDim2.new(2, 0, 0, math.max(400, #richTextLines * 16 + 10)),
 		}, {
-			Padding = React.createElement("UIPadding", {
-				PaddingTop = UDim.new(0, 5),
-				PaddingBottom = UDim.new(0, 5),
-			}),
 			LineNumbersBG = React.createElement("Frame", {
 				Size = UDim2.new(0, 45, 1, 0),
 				BackgroundColor3 = theme:GetColor(Enum.StudioStyleGuideColor.ScrollBarBackground),
@@ -110,32 +113,11 @@ local function CodeEditor(props)
 				BorderSizePixel = 0,
 				ZIndex = 0,
 			}),
-			LineNumbers = React.createElement("TextLabel", {
-				Size = UDim2.new(0, 35, 1, 0),
+			Content = React.createElement("Frame", {
+				Size = UDim2.new(1, 0, 1, 0),
 				BackgroundTransparency = 1,
-				Text = lineNumbers,
-				TextColor3 = theme:GetColor(Enum.StudioStyleGuideColor.DimmedText),
-				TextXAlignment = Enum.TextXAlignment.Right,
-				TextYAlignment = Enum.TextYAlignment.Top,
-				Font = Enum.Font.Code,
-				TextSize = 14,
-				LineHeight = 1.2,
 				ZIndex = 1,
-			}),
-			CodeText = React.createElement("TextLabel", {
-				Size = UDim2.new(1, -55, 1, 0),
-				Position = UDim2.new(0, 55, 0, 0),
-				BackgroundTransparency = 1,
-				Text = displayCode,
-				TextColor3 = theme:GetColor(Enum.StudioStyleGuideColor.MainText),
-				TextXAlignment = Enum.TextXAlignment.Left,
-				TextYAlignment = Enum.TextYAlignment.Top,
-				Font = Enum.Font.Code,
-				TextSize = 14,
-				LineHeight = 1.2,
-				ZIndex = 1,
-				ref = textRef,
-			})
+			}, contentChildren)
 		})
 	})
 end
