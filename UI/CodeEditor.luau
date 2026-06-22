@@ -1,22 +1,29 @@
 local React = require(script.Parent.Parent.Library.Roact.React)
 local StudioComponents = require(script.Parent.Parent.Library.studiocomponents)
 local Highlighter = require(script.Parent.Parent.Library.Highlighter)
+local usePlugin = require(script.Parent.Parent.Library.studiocomponents.Hooks.usePlugin)
 
 local function CodeEditor(props)
 	local textRef = React.useRef(nil)
 	local theme = StudioComponents.useTheme()
 	
 	local code = props.Code or ""
+	local displayCode = code
+	if #displayCode > 150000 then
+		displayCode = string.sub(displayCode, 1, 150000) .. "\n\n-- [WARNING: Code truncated for UI preview due to length limits. Use 'Export' to view full source.]"
+	end
+	
 	local instanceName = props.InstanceName or "ScreenGui"
 	local converterName = props.ConverterName or "Roact"
 	local generationTimeMs = props.GenerationTimeMs or 0
+	local plugin = usePlugin()
 	
 	React.useEffect(function()
 		local cleanup
 		if textRef.current then
 			cleanup = Highlighter.highlight({
 				textObject = textRef.current,
-				src = code,
+				src = displayCode,
 				forceUpdate = true
 			})
 		end
@@ -26,9 +33,9 @@ local function CodeEditor(props)
 				cleanup()
 			end
 		end
-	end, {code})
+	end, {displayCode})
 
-	local lines = string.split(code, "\n")
+	local lines = string.split(displayCode, "\n")
 	local lineNumbers = ""
 	for i = 1, #lines do
 		lineNumbers = lineNumbers .. tostring(i) .. "\n"
@@ -63,12 +70,14 @@ local function CodeEditor(props)
 				Size = UDim2.new(0, 90, 0, 24),
 				AnchorPoint = Vector2.new(1, 0.5),
 				Position = UDim2.new(1, 0, 0.5, 0),
-				Text = "Select All",
+				Text = "Export",
 				OnActivated = function()
-					if textRef.current then
-						textRef.current:CaptureFocus()
-						textRef.current.SelectionStart = 1
-						textRef.current.CursorPosition = #code + 1
+					if plugin then
+						local newScript = Instance.new("ModuleScript")
+						newScript.Name = string.format("%s_%s", instanceName, converterName)
+						newScript.Source = code
+						newScript.Parent = game:GetService("ServerStorage")
+						plugin:OpenScript(newScript)
 					end
 				end,
 			})
@@ -113,21 +122,17 @@ local function CodeEditor(props)
 				LineHeight = 1.2,
 				ZIndex = 1,
 			}),
-			CodeText = React.createElement("TextBox", {
+			CodeText = React.createElement("TextLabel", {
 				Size = UDim2.new(1, -55, 1, 0),
 				Position = UDim2.new(0, 55, 0, 0),
 				BackgroundTransparency = 1,
-				Text = code,
+				Text = displayCode,
 				TextColor3 = theme:GetColor(Enum.StudioStyleGuideColor.MainText),
 				TextXAlignment = Enum.TextXAlignment.Left,
 				TextYAlignment = Enum.TextYAlignment.Top,
 				Font = Enum.Font.Code,
 				TextSize = 14,
 				LineHeight = 1.2,
-				ClearTextOnFocus = false,
-				TextEditable = false,
-				MultiLine = true,
-				TextWrapped = false,
 				ZIndex = 1,
 				ref = textRef,
 			})
