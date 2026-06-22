@@ -67,7 +67,10 @@ local function buildComponentTemplate(firstNode, diffs, currentPath)
 		Name = firstNode.Name,
 		Properties = {},
 		Children = {},
-		ParamBindings = {} -- e.g. ParamBindings["Text"] = "Title_Text"
+		ParamBindings = {},
+		States = firstNode.States,
+		Events = firstNode.Events,
+		Attributes = firstNode.Attributes
 	}
 	
 	for propName, val in pairs(firstNode.Properties) do
@@ -170,7 +173,9 @@ function ComponentExtractor.extract(rootNodes)
 						Type = "ComponentCall",
 						ComponentName = compName,
 						Name = node.Name,
-						Props = args
+						Props = args,
+						States = node.States,
+						Events = node.Events
 					}
 				end
 			end

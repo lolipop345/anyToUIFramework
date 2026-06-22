@@ -3,6 +3,7 @@ local DependencyHelper = require(script.Parent:WaitForChild("DependencyHelper"))
 local IRBuilder = require(script.Parent:WaitForChild("IRBuilder"))
 local ComponentExtractor = require(script.Parent:WaitForChild("ComponentExtractor"))
 local ConstantExtractor = require(script.Parent:WaitForChild("ConstantExtractor"))
+local BehaviorAnalyzer = require(script.Parent:WaitForChild("BehaviorAnalyzer"))
 
 local Fusion2Converter = {}
 
@@ -41,14 +42,13 @@ local function generateFusion2Code(node, indentLevel)
 		if propsAdded > 0 then
 			table.insert(code, "")
 		end
-		table.insert(code, string.format('%s[Children] = {', nextIndent))
 		
+		table.insert(code, string.format('%s[Children] = {', nextIndent))
 		for i, child in ipairs(children) do
 			local childCode = generateFusion2Code(child, indentLevel + 2)
 			table.insert(code, childCode .. ",")
 		end
-		
-		table.insert(code, string.format('%s}', nextIndent))
+		table.insert(code, string.format('%s},', nextIndent))
 	end
 	
 	table.insert(code, string.format('%s}', indent))
@@ -67,6 +67,8 @@ function Fusion2Converter.Convert(instances)
 			table.insert(rootNodes, node)
 		end
 	end
+	
+	BehaviorAnalyzer.analyze(rootNodes)
 	
 	local newRoots, components = ComponentExtractor.extract(rootNodes)
 	local declarations = ConstantExtractor.extract(newRoots, components)

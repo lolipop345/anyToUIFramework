@@ -14,6 +14,7 @@ local function App(props)
 	local generatedCode, setGeneratedCode = React.useState("-- Select UI instances in Explorer to generate code.\n-- Example output will appear here.")
 	local instanceName, setInstanceName = React.useState("SelectedInstances")
 	local generationTimeMs, setGenerationTimeMs = React.useState(0)
+	local isGenerating, setIsGenerating = React.useState(false)
 	
 	React.useEffect(function()
 		local function updateCode()
@@ -43,19 +44,25 @@ local function App(props)
 				setInstanceName(filteredSelected[1].Name)
 				local converter = Converters[selectedConverter]
 				if converter and converter.Convert then
-					local startTime = os.clock()
-					local success, code = pcall(function()
-						return converter.Convert(filteredSelected)
+					setIsGenerating(true)
+					task.spawn(function()
+						local startTime = os.clock()
+						local success, code = pcall(function()
+							return converter.Convert(filteredSelected)
+						end)
+						local endTime = os.clock()
+						
+						-- Need to ensure React batches these updates or they run safely
+						setGenerationTimeMs(math.floor((endTime - startTime) * 1000))
+						
+						if success then
+							setGeneratedCode(code)
+						else
+							warn("anyToUIFramework Code Generation Error:\n" .. tostring(code))
+							setGeneratedCode("-- Error generating code: " .. tostring(code))
+						end
+						setIsGenerating(false)
 					end)
-					local endTime = os.clock()
-					setGenerationTimeMs(math.floor((endTime - startTime) * 1000))
-					
-					if success then
-						setGeneratedCode(code)
-					else
-						warn("anyToUIFramework Code Generation Error:\n" .. tostring(code))
-						setGeneratedCode("-- Error generating code: " .. tostring(code))
-					end
 				end
 			else
 				setGeneratedCode("-- Select UI instances in Explorer to generate code.")
@@ -148,6 +155,21 @@ local function App(props)
 							ConverterName = selectedConverter,
 							GenerationTimeMs = generationTimeMs,
 							OnCopy = copyToClipboard
+						}),
+						
+						LoadingOverlay = isGenerating and React.createElement("Frame", {
+							Size = UDim2.fromScale(1, 1),
+							BackgroundColor3 = Color3.fromRGB(30, 30, 30),
+							BackgroundTransparency = 0.5,
+							ZIndex = 10,
+						}, {
+							Label = React.createElement(StudioComponents.Label, {
+								Text = "Generating Code... Please wait.",
+								Size = UDim2.fromScale(1, 1),
+								TextSize = 18,
+								Font = Enum.Font.BuilderSansMedium,
+								ZIndex = 11,
+							})
 						})
 					})
 				})

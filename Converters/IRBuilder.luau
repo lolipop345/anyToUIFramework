@@ -10,9 +10,24 @@ local function generateStructureHash(node)
 	return table.concat(parts, "|")
 end
 
+local processedCount = 0
+
 function IRBuilder.build(instance)
+	processedCount = processedCount + 1
+	if processedCount % 50 == 0 then
+		task.wait()
+	end
+	
 	if instance:IsA("LuaSourceContainer") then
-		return nil
+		local source = ""
+		pcall(function() source = instance.Source end)
+		return {
+			Type = "Script",
+			Name = instance.Name,
+			ClassName = instance.ClassName,
+			Source = source,
+			Hash = "Script"
+		}
 	end
 	
 	local node = {
@@ -21,8 +36,13 @@ function IRBuilder.build(instance)
 		ClassName = instance.ClassName,
 		Properties = {},
 		Children = {},
+		Attributes = {},
 		SourceInstance = instance
 	}
+	
+	pcall(function()
+		node.Attributes = instance:GetAttributes()
+	end)
 	
 	local properties = PropertyHelper.getProperties(instance.ClassName)
 	for _, propName in ipairs(properties) do
@@ -44,6 +64,10 @@ function IRBuilder.build(instance)
 	
 	node.Hash = generateStructureHash(node)
 	return node
+end
+
+function IRBuilder.resetCounter()
+	processedCount = 0
 end
 
 return IRBuilder

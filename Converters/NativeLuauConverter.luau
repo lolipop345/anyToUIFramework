@@ -89,6 +89,8 @@ function NativeLuauConverter.Convert(instances)
 		end
 	end
 	
+	BehaviorAnalyzer.analyze(rootNodes)
+	
 	local newRoots, components = ComponentExtractor.extract(rootNodes)
 	local declarations = ConstantExtractor.extract(newRoots, components)
 	

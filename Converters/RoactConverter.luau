@@ -3,6 +3,7 @@ local DependencyHelper = require(script.Parent:WaitForChild("DependencyHelper"))
 local IRBuilder = require(script.Parent:WaitForChild("IRBuilder"))
 local ComponentExtractor = require(script.Parent:WaitForChild("ComponentExtractor"))
 local ConstantExtractor = require(script.Parent:WaitForChild("ConstantExtractor"))
+local BehaviorAnalyzer = require(script.Parent:WaitForChild("BehaviorAnalyzer"))
 
 local RoactConverter = {}
 
@@ -15,6 +16,11 @@ local function generateRoactCode(node, indentLevel, parentChildNames)
 		for pName, pVal in pairs(node.Props) do
 			table.insert(args, string.format('%s%s = %s,', nextIndent, pName, PropertyHelper.formatValue(pVal)))
 		end
+		
+		if node.Events and node.Events.OnClick then
+			table.insert(args, string.format('%s[Roact.Event.Activated] = props.OnClick,', nextIndent))
+		end
+		
 		if #args > 0 then
 			return string.format('%sRoact.createElement(%s, {\n%s\n%s})', indent, node.ComponentName, table.concat(args, "\n"), indent)
 		else
@@ -27,12 +33,43 @@ local function generateRoactCode(node, indentLevel, parentChildNames)
 	
 	local propsAdded = 0
 	for propName, val in pairs(node.Properties) do
-		table.insert(code, string.format('%s%s = %s,', nextIndent, propName, PropertyHelper.formatValue(val)))
+		local isAffectedByHover = node.States and node.States.isHovered and node.States.isHovered.AffectedProperties[propName]
+		local isAffectedByPress = node.States and node.States.isPressed and node.States.isPressed.AffectedProperties[propName]
+		
+		if isAffectedByPress then
+			table.insert(code, string.format('%s%s = isPressed and props.Pressed_%s or %s,', nextIndent, propName, propName, PropertyHelper.formatValue(val)))
+		elseif isAffectedByHover then
+			table.insert(code, string.format('%s%s = isHovered and props.Hover_%s or %s,', nextIndent, propName, propName, PropertyHelper.formatValue(val)))
+		else
+			table.insert(code, string.format('%s%s = %s,', nextIndent, propName, PropertyHelper.formatValue(val)))
+		end
 		propsAdded = propsAdded + 1
 	end
 	
 	for propName, paramName in pairs(node.ParamBindings or {}) do
-		table.insert(code, string.format('%s%s = props.%s,', nextIndent, propName, paramName))
+		local isAffectedByHover = node.States and node.States.isHovered and node.States.isHovered.AffectedProperties[propName]
+		if isAffectedByHover then
+			table.insert(code, string.format('%s%s = isHovered and props.Hover_%s or props.%s,', nextIndent, propName, paramName, paramName))
+		else
+			table.insert(code, string.format('%s%s = props.%s,', nextIndent, propName, paramName))
+		end
+		propsAdded = propsAdded + 1
+	end
+	
+	if node.States and node.States.isHovered then
+		table.insert(code, string.format('%s[Roact.Event.MouseEnter] = function() setIsHovered(true) end,', nextIndent))
+		table.insert(code, string.format('%s[Roact.Event.MouseLeave] = function() setIsHovered(false) end,', nextIndent))
+		propsAdded = propsAdded + 1
+	end
+	
+	if node.States and node.States.isPressed then
+		table.insert(code, string.format('%s[Roact.Event.InputBegan] = function(rbx, input) if input.UserInputType == Enum.UserInputType.MouseButton1 then setIsPressed(true) end end,', nextIndent))
+		table.insert(code, string.format('%s[Roact.Event.InputEnded] = function(rbx, input) if input.UserInputType == Enum.UserInputType.MouseButton1 then setIsPressed(false) end end,', nextIndent))
+		propsAdded = propsAdded + 1
+	end
+	
+	if node.Events and node.Events.OnClick then
+		table.insert(code, string.format('%s[Roact.Event.Activated] = props.OnClick or function() end,', nextIndent))
 		propsAdded = propsAdded + 1
 	end
 	
@@ -86,6 +123,8 @@ function RoactConverter.Convert(instances)
 		end
 	end
 	
+	BehaviorAnalyzer.analyze(rootNodes)
+	
 	local newRoots, components = ComponentExtractor.extract(rootNodes)
 	local declarations = ConstantExtractor.extract(newRoots, components)
 	
@@ -102,6 +141,13 @@ function RoactConverter.Convert(instances)
 	
 	for _, comp in ipairs(components) do
 		table.insert(results, string.format("local function %s(props)", comp.Name))
+		
+		if comp.RootNode.States and comp.RootNode.States.isHovered then
+			table.insert(results, "\tlocal isHovered, setIsHovered = Roact.createBinding(false)")
+			table.insert(results, "\tlocal function setIsHoveredTrue() setIsHovered(true) end")
+			table.insert(results, "\tlocal function setIsHoveredFalse() setIsHovered(false) end")
+		end
+		
 		local compCode = generateRoactCode(comp.RootNode, 1, {})
 		table.insert(results, string.format("\treturn %s", compCode:match("^%s*(.-)$")))
 		table.insert(results, "end")
