@@ -86,7 +86,7 @@ local function traverseAndProfile(node, profiles)
 	end
 
 	if node.Children then
-		for _, child in ipairs(node.Children) do
+		for _, child in ipairs(node.Children or {}) do
 			traverseAndProfile(child, profiles)
 		end
 	end
@@ -118,7 +118,7 @@ local function traverseAndReplace(node, constantMap)
 	end
 
 	if node.Children then
-		for _, child in ipairs(node.Children) do
+		for _, child in ipairs(node.Children or {}) do
 			traverseAndReplace(child, constantMap)
 		end
 	end

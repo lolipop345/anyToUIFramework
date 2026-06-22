@@ -11,7 +11,7 @@ function BehaviorAnalyzer.analyze(roots)
 		
 		local newChildren = {}
 		if node.Children then
-			for _, child in ipairs(node.Children) do
+			for _, child in ipairs(node.Children or {}) do
 				local isScript = traverse(child, node)
 				if not isScript then
 					table.insert(newChildren, child)
