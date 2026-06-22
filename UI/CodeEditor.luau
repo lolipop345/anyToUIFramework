@@ -29,6 +29,8 @@ local function CodeEditor(props)
 		Layout = React.createElement("UIListLayout", {
 			SortOrder = Enum.SortOrder.LayoutOrder,
 			FillDirection = Enum.FillDirection.Vertical,
+			VerticalAlignment = Enum.VerticalAlignment.Top,
+			HorizontalAlignment = Enum.HorizontalAlignment.Left,
 		})
 	}
 	
@@ -111,7 +113,7 @@ local function CodeEditor(props)
 		Scroll = React.createElement(StudioComponents.ScrollFrame, {
 			Size = UDim2.new(1, 0, 1, -33),
 			Position = UDim2.new(0, 0, 0, 33),
-			CanvasSize = UDim2.new(2, 0, 0, math.max(400, #richTextLines * 16 + 10)),
+			CanvasSize = UDim2.new(2, 0, 0, #richTextLines * 16 + 10),
 		}, {
 			LineNumbersBG = React.createElement("Frame", {
 				Size = UDim2.new(0, 45, 1, 0),
