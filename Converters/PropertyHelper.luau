@@ -26,17 +26,21 @@ local COMMON_PROPERTIES = {
 	"Name", "Size", "Position", "AnchorPoint", "BackgroundColor3", 
 	"BackgroundTransparency", "BorderColor3", "BorderSizePixel",
 	"Rotation", "Visible", "ZIndex", "LayoutOrder", "ClipsDescendants",
-	"AutoLocalize"
+	"AutoLocalize", "Active", "Selectable", "AutomaticSize", "Style"
 }
 
 local CLASS_PROPERTIES = {
-	TextLabel = {"Text", "TextColor3", "TextSize", "Font", "TextXAlignment", "TextYAlignment", "TextWrapped", "TextScaled", "TextTransparency", "RichText", "LineHeight", "MaxVisibleGraphemes"},
-	TextButton = {"Text", "TextColor3", "TextSize", "Font", "TextXAlignment", "TextYAlignment", "TextWrapped", "TextScaled", "TextTransparency", "RichText", "AutoButtonColor"},
-	TextBox = {"Text", "TextColor3", "TextSize", "Font", "TextXAlignment", "TextYAlignment", "TextWrapped", "TextScaled", "TextTransparency", "RichText", "ClearTextOnFocus", "MultiLine", "PlaceholderText", "PlaceholderColor3", "TextEditable"},
+	Frame = {},
+	CanvasGroup = {"GroupColor3", "GroupTransparency"},
+	VideoFrame = {"Playing", "TimePosition", "Video", "Volume", "Looped"},
+	ViewportFrame = {"Ambient", "LightColor", "LightDirection", "CurrentCamera", "ImageColor3", "ImageTransparency"},
+	TextLabel = {"Text", "TextColor3", "TextSize", "Font", "FontFace", "TextXAlignment", "TextYAlignment", "TextWrapped", "TextScaled", "TextTransparency", "RichText", "LineHeight", "MaxVisibleGraphemes", "TextDirection", "TextStrokeColor3", "TextStrokeTransparency"},
+	TextButton = {"Text", "TextColor3", "TextSize", "Font", "FontFace", "TextXAlignment", "TextYAlignment", "TextWrapped", "TextScaled", "TextTransparency", "RichText", "AutoButtonColor", "LineHeight", "MaxVisibleGraphemes", "TextDirection", "TextStrokeColor3", "TextStrokeTransparency"},
+	TextBox = {"Text", "TextColor3", "TextSize", "Font", "FontFace", "TextXAlignment", "TextYAlignment", "TextWrapped", "TextScaled", "TextTransparency", "RichText", "ClearTextOnFocus", "MultiLine", "PlaceholderText", "PlaceholderColor3", "TextEditable", "LineHeight", "MaxVisibleGraphemes", "TextDirection", "TextStrokeColor3", "TextStrokeTransparency"},
 	ImageLabel = {"Image", "ImageColor3", "ImageTransparency", "ImageRectOffset", "ImageRectSize", "ScaleType", "SliceCenter", "SliceScale", "TileSize", "ResampleMode"},
 	ImageButton = {"Image", "ImageColor3", "ImageTransparency", "ImageRectOffset", "ImageRectSize", "ScaleType", "SliceCenter", "SliceScale", "TileSize", "HoverImage", "PressedImage", "AutoButtonColor"},
-	ScrollingFrame = {"CanvasPosition", "CanvasSize", "ScrollBarImageColor3", "ScrollBarImageTransparency", "ScrollBarThickness", "ScrollingDirection", "ElasticBehavior", "HorizontalScrollBarInset", "VerticalScrollBarInset"},
-	UIListLayout = {"Padding", "FillDirection", "HorizontalAlignment", "VerticalAlignment", "SortOrder"},
+	ScrollingFrame = {"CanvasPosition", "CanvasSize", "AutomaticCanvasSize", "ScrollBarImageColor3", "ScrollBarImageTransparency", "ScrollBarThickness", "ScrollingDirection", "ElasticBehavior", "HorizontalScrollBarInset", "VerticalScrollBarInset"},
+	UIListLayout = {"Padding", "FillDirection", "HorizontalAlignment", "VerticalAlignment", "SortOrder", "Wraps", "ItemLineAlignment"},
 	UIGridLayout = {"CellPadding", "CellSize", "FillDirection", "HorizontalAlignment", "VerticalAlignment", "SortOrder", "StartCorner"},
 	UIPadding = {"PaddingBottom", "PaddingLeft", "PaddingRight", "PaddingTop"},
 	UICorner = {"CornerRadius"},

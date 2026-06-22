@@ -1,12 +1,15 @@
 local React = require(script.Parent.Parent.Library.Roact.React)
 local StudioComponents = require(script.Parent.Parent.Library.studiocomponents)
 local CodeEditor = require(script.Parent.CodeEditor)
+local PreviewTab = require(script.Parent.PreviewTab)
 local Converters = require(script.Parent.Parent.Converters)
 
 local Selection = game:GetService("Selection")
 local StudioService = game:GetService("StudioService")
 
 local function App(props)
+	local currentTab, setCurrentTab = React.useState("Converter")
+	
 	local selectedConverter, setSelectedConverter = React.useState("Roact")
 	local generatedCode, setGeneratedCode = React.useState("-- Select UI instances in Explorer to generate code.\n-- Example output will appear here.")
 	local instanceName, setInstanceName = React.useState("SelectedInstances")
@@ -54,60 +57,83 @@ local function App(props)
 		Size = UDim2.fromScale(1, 1),
 	}, {
 		Padding = React.createElement("UIPadding", {
-			PaddingTop = UDim.new(0, 10),
-			PaddingBottom = UDim.new(0, 10),
-			PaddingLeft = UDim.new(0, 10),
-			PaddingRight = UDim.new(0, 10),
-		}),
-		Layout = React.createElement("UIListLayout", {
-			SortOrder = Enum.SortOrder.LayoutOrder,
-			FillDirection = Enum.FillDirection.Vertical,
-			Padding = UDim.new(0, 10),
+			PaddingTop = UDim.new(0, 2),
+			PaddingBottom = UDim.new(0, 2),
+			PaddingLeft = UDim.new(0, 2),
+			PaddingRight = UDim.new(0, 2),
 		}),
 		
-		-- Toolbar Section (Submenu)
-		Toolbar = React.createElement("Frame", {
-			Size = UDim2.new(1, 0, 0, 32),
-			BackgroundTransparency = 1,
-			LayoutOrder = 1,
-			ZIndex = 2,
+		Tabs = React.createElement(StudioComponents.TabContainer, {
+			SelectedTab = currentTab,
+			OnTabSelected = setCurrentTab,
+			Size = UDim2.fromScale(1, 1),
 		}, {
-			Layout = React.createElement("UIListLayout", {
-				SortOrder = Enum.SortOrder.LayoutOrder,
-				FillDirection = Enum.FillDirection.Horizontal,
-				VerticalAlignment = Enum.VerticalAlignment.Center,
-				Padding = UDim.new(0, 10),
-			}),
-			Label = React.createElement(StudioComponents.Label, {
-				Text = "Target Framework:",
-				Size = UDim2.new(0, 110, 1, 0),
+			Converter = {
 				LayoutOrder = 1,
-			}),
-			Dropdown = React.createElement(StudioComponents.Dropdown, {
-				Items = convertersList,
-				SelectedItem = selectedConverter,
-				OnItemSelected = function(item)
-					if item then setSelectedConverter(item) end
-				end,
-				Size = UDim2.new(0, 150, 0, 28),
+				Content = React.createElement("Frame", {
+					Size = UDim2.fromScale(1, 1),
+					BackgroundTransparency = 1,
+				}, {
+					Padding = React.createElement("UIPadding", {
+						PaddingTop = UDim.new(0, 10),
+						PaddingLeft = UDim.new(0, 10),
+						PaddingRight = UDim.new(0, 10),
+						PaddingBottom = UDim.new(0, 10),
+					}),
+					Layout = React.createElement("UIListLayout", {
+						SortOrder = Enum.SortOrder.LayoutOrder,
+						FillDirection = Enum.FillDirection.Vertical,
+						Padding = UDim.new(0, 10),
+					}),
+					
+					-- Toolbar Section
+					Toolbar = React.createElement("Frame", {
+						Size = UDim2.new(1, 0, 0, 32),
+						BackgroundTransparency = 1,
+						LayoutOrder = 1,
+					}, {
+						Layout = React.createElement("UIListLayout", {
+							SortOrder = Enum.SortOrder.LayoutOrder,
+							FillDirection = Enum.FillDirection.Horizontal,
+							VerticalAlignment = Enum.VerticalAlignment.Center,
+							Padding = UDim.new(0, 10),
+						}),
+						Label = React.createElement(StudioComponents.Label, {
+							Text = "Target Framework:",
+							Size = UDim2.new(0, 110, 1, 0),
+							LayoutOrder = 1,
+						}),
+						Dropdown = React.createElement(StudioComponents.Dropdown, {
+							Items = convertersList,
+							SelectedItem = selectedConverter,
+							OnItemSelected = function(item)
+								if item then setSelectedConverter(item) end
+							end,
+							Size = UDim2.new(0, 150, 0, 28),
+							LayoutOrder = 2,
+						}),
+					}),
+					
+					-- Code Editor Section
+					EditorWrapper = React.createElement("Frame", {
+						Size = UDim2.new(1, 0, 1, -42),
+						BackgroundTransparency = 1,
+						LayoutOrder = 2,
+					}, {
+						CodeEditor = React.createElement(CodeEditor, {
+							Code = generatedCode,
+							InstanceName = instanceName,
+							ConverterName = selectedConverter,
+							GenerationTimeMs = generationTimeMs,
+							OnCopy = copyToClipboard
+						})
+					})
+				})
+			},
+			Preview = {
 				LayoutOrder = 2,
-			}),
-		}),
-		
-		-- Code Editor Section
-		EditorWrapper = React.createElement("Frame", {
-			Size = UDim2.new(1, 0, 1, -42),
-			BackgroundTransparency = 1,
-			LayoutOrder = 2,
-			ZIndex = 1,
-		}, {
-			CodeEditor = React.createElement(CodeEditor, {
-				Code = generatedCode,
-				InstanceName = instanceName,
-				ConverterName = selectedConverter,
-				GenerationTimeMs = generationTimeMs,
-				OnCopy = copyToClipboard
-			})
+				Content = React.createElement(PreviewTab, {})
+			}
 		})
 	})
 end
