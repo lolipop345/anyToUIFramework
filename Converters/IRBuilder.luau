@@ -5,7 +5,7 @@ local IRBuilder = {}
 local function generateStructureHash(node)
 	local parts = {node.ClassName}
 	if node.Children then
-		for _, child in ipairs(node.Children) do
+		for _, child in ipairs(node.Children or {}) do
 			table.insert(parts, generateStructureHash(child))
 		end
 	end
@@ -28,7 +28,10 @@ function IRBuilder.build(instance)
 			Name = instance.Name,
 			ClassName = instance.ClassName,
 			Source = source,
-			Hash = "Script"
+			Hash = "Script",
+			Properties = {},
+			Children = {},
+			Attributes = {}
 		}
 	end
 	
@@ -46,7 +49,7 @@ function IRBuilder.build(instance)
 		node.Attributes = instance:GetAttributes()
 	end)
 	
-	local properties = PropertyHelper.getProperties(instance.ClassName)
+	local properties = PropertyHelper.getProperties(instance.ClassName) or {}
 	for _, propName in ipairs(properties) do
 		local success, val = pcall(function() return instance[propName] end)
 		if success and val ~= nil then
@@ -57,7 +60,7 @@ function IRBuilder.build(instance)
 		end
 	end
 	
-	for _, child in ipairs(instance:GetChildren()) do
+	for _, child in ipairs(instance:GetChildren() or {}) do
 		local childNode = IRBuilder.build(child)
 		if childNode then
 			table.insert(node.Children, childNode)
