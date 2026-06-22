@@ -10,6 +10,7 @@ local function App(props)
 	local selectedConverter, setSelectedConverter = React.useState("Roact")
 	local generatedCode, setGeneratedCode = React.useState("-- Select UI instances in Explorer to generate code.\n-- Example output will appear here.")
 	local instanceName, setInstanceName = React.useState("SelectedInstances")
+	local generationTimeMs, setGenerationTimeMs = React.useState(0)
 	
 	React.useEffect(function()
 		local function updateCode()
@@ -18,9 +19,13 @@ local function App(props)
 				setInstanceName(selected[1].Name)
 				local converter = Converters[selectedConverter]
 				if converter and converter.Convert then
+					local startTime = os.clock()
 					local success, code = pcall(function()
 						return converter.Convert(selected)
 					end)
+					local endTime = os.clock()
+					setGenerationTimeMs(math.floor((endTime - startTime) * 1000))
+					
 					if success then
 						setGeneratedCode(code)
 					else
@@ -100,6 +105,7 @@ local function App(props)
 				Code = generatedCode,
 				InstanceName = instanceName,
 				ConverterName = selectedConverter,
+				GenerationTimeMs = generationTimeMs,
 				OnCopy = copyToClipboard
 			})
 		})

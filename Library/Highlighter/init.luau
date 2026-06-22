@@ -253,7 +253,7 @@ function Highlighter.highlight(props: types.HighlightProps): () -> ()
 	textObject.TextYAlignment = Enum.TextYAlignment.Top
 	textObject.BackgroundColor3 = theme.getColor("background")
 	textObject.TextColor3 = theme.getColor("iden")
-	textObject.TextTransparency = 0.5
+	textObject.TextTransparency = 1 -- Changed from 0.5 to 1 to prevent double rendering
 
 	-- Build the highlight labels
 	local lineFolder = textObject:FindFirstChild("SyntaxHighlights")
