@@ -1,3 +1,8 @@
+local RunService = game:GetService("RunService")
+if RunService:IsRunMode() then
+	return
+end
+
 local Images = require(script.Parent:WaitForChild("Images"))
 
 -- Create the Toolbar
