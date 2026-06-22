@@ -2,6 +2,7 @@ local PropertyHelper = require(script.Parent:WaitForChild("PropertyHelper"))
 local IRBuilder = require(script.Parent:WaitForChild("IRBuilder"))
 local ComponentExtractor = require(script.Parent:WaitForChild("ComponentExtractor"))
 local ConstantExtractor = require(script.Parent:WaitForChild("ConstantExtractor"))
+local BehaviorAnalyzer = require(script.Parent:WaitForChild("BehaviorAnalyzer"))
 
 local NativeLuauConverter = {}
 
