@@ -1,3 +1,3 @@
 return {
-	Icon = "rbxassetid://137888970970981"
+	Icon = "rbxassetid://123408844165718"
 }

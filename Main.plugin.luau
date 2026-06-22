@@ -19,14 +19,18 @@ local widgetInfo = DockWidgetPluginGuiInfo.new(
 	300, 400 -- Minimum size
 )
 
-local pluginGui = plugin:CreateDockWidgetPluginGui("CodifyMainWidget", widgetInfo)
-pluginGui.Title = "Codify - Reactive UI Converter"
+local pluginGui = plugin:CreateDockWidgetPluginGui("anyToUIFrameworkMainWidget", widgetInfo)
+pluginGui.Title = "anyToUIFramework"
 
 local React = require(script.Parent:WaitForChild("Library"):WaitForChild("Roact"):WaitForChild("React"))
 local ReactRoblox = require(script.Parent:WaitForChild("Library"):WaitForChild("Roact"):WaitForChild("ReactRoblox"))
 local StudioComponents = require(script.Parent:WaitForChild("Library"):WaitForChild("studiocomponents"))
+local Highlighter = require(script.Parent:WaitForChild("Library"):WaitForChild("Highlighter"))
 
 local App = require(script.Parent:WaitForChild("UI"):WaitForChild("App"))
+
+-- Initialize Highlighter to adapt to Studio Theme changes
+Highlighter.matchStudioSettings()
 
 -- Basic DockWidget UI mounting
 local root = ReactRoblox.createRoot(pluginGui)
