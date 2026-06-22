@@ -69,8 +69,8 @@
 	`OnItemSelected` is called with correspond to the `Id` field of an item in the `Items` array.
 ]=]
 
-local React = require(script.Parent.Parent:FindFirstChild('node_modules'):FindFirstChild('.luau-aliases'):FindFirstChild('@jsdotlua'):FindFirstChild('react'))
-local ReactRoblox = require(script.Parent.Parent:FindFirstChild('node_modules'):FindFirstChild('.luau-aliases'):FindFirstChild('@jsdotlua'):FindFirstChild('react-roblox'))
+local React = require(script.Parent.Parent:FindFirstChild('node_modules'):FindFirstChild('luau-aliases'):FindFirstChild('@jsdotlua'):FindFirstChild('react'))
+local ReactRoblox = require(script.Parent.Parent:FindFirstChild('node_modules'):FindFirstChild('luau-aliases'):FindFirstChild('@jsdotlua'):FindFirstChild('react-roblox'))
 
 local Constants = require(script.Parent.Parent:FindFirstChild('Constants'))
 local useTheme = require(script.Parent.Parent:FindFirstChild('Hooks'):FindFirstChild('useTheme'))

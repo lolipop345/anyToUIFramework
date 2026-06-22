@@ -1,5 +1,5 @@
-local React = require(script.Parent.Parent.Parent:FindFirstChild('node_modules'):FindFirstChild('.luau-aliases'):FindFirstChild('@jsdotlua'):FindFirstChild('react'))
-local ReactRoblox = require(script.Parent.Parent.Parent:FindFirstChild('node_modules'):FindFirstChild('.luau-aliases'):FindFirstChild('@jsdotlua'):FindFirstChild('react-roblox'))
+local React = require(script.Parent.Parent.Parent:FindFirstChild('node_modules'):FindFirstChild('luau-aliases'):FindFirstChild('@jsdotlua'):FindFirstChild('react'))
+local ReactRoblox = require(script.Parent.Parent.Parent:FindFirstChild('node_modules'):FindFirstChild('luau-aliases'):FindFirstChild('@jsdotlua'):FindFirstChild('react-roblox'))
 
 local PluginProvider = require(script.Parent.Parent.Parent:FindFirstChild('Components'):FindFirstChild('PluginProvider'))
 local ScrollFrame = require(script.Parent.Parent.Parent:FindFirstChild('Components'):FindFirstChild('ScrollFrame'))

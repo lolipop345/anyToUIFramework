@@ -22,7 +22,7 @@
 
 local Studio = settings().Studio
 
-local React = require(script.Parent.Parent:FindFirstChild('node_modules'):FindFirstChild('.luau-aliases'):FindFirstChild('@jsdotlua'):FindFirstChild('react'))
+local React = require(script.Parent.Parent:FindFirstChild('node_modules'):FindFirstChild('luau-aliases'):FindFirstChild('@jsdotlua'):FindFirstChild('react'))
 
 local ThemeContext = require(script.Parent.Parent:FindFirstChild('Contexts'):FindFirstChild('ThemeContext'))
 

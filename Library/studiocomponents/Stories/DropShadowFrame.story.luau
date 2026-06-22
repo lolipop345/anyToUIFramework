@@ -1,4 +1,4 @@
-local React = require(script.Parent.Parent:FindFirstChild('node_modules'):FindFirstChild('.luau-aliases'):FindFirstChild('@jsdotlua'):FindFirstChild('react'))
+local React = require(script.Parent.Parent:FindFirstChild('node_modules'):FindFirstChild('luau-aliases'):FindFirstChild('@jsdotlua'):FindFirstChild('react'))
 
 local Checkbox = require(script.Parent.Parent:FindFirstChild('Components'):FindFirstChild('Checkbox'))
 local DropShadowFrame = require(script.Parent.Parent:FindFirstChild('Components'):FindFirstChild('DropShadowFrame'))

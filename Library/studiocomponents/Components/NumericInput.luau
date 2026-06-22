@@ -27,7 +27,7 @@
 
 local RunService = game:GetService("RunService")
 
-local React = require(script.Parent.Parent:FindFirstChild('node_modules'):FindFirstChild('.luau-aliases'):FindFirstChild('@jsdotlua'):FindFirstChild('react'))
+local React = require(script.Parent.Parent:FindFirstChild('node_modules'):FindFirstChild('luau-aliases'):FindFirstChild('@jsdotlua'):FindFirstChild('react'))
 
 local BaseTextInput = require(script.Parent:FindFirstChild('Foundation'):FindFirstChild('BaseTextInput'))
 local Slider = require(script.Parent:FindFirstChild('Slider'))

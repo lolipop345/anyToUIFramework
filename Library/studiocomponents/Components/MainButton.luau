@@ -11,7 +11,7 @@
 	See the docs for [Button] for information about customization and usage.
 ]=]
 
-local React = require(script.Parent.Parent:FindFirstChild('node_modules'):FindFirstChild('.luau-aliases'):FindFirstChild('@jsdotlua'):FindFirstChild('react'))
+local React = require(script.Parent.Parent:FindFirstChild('node_modules'):FindFirstChild('luau-aliases'):FindFirstChild('@jsdotlua'):FindFirstChild('react'))
 
 local BaseButton = require(script.Parent:FindFirstChild('Foundation'):FindFirstChild('BaseButton'))
 --[=[

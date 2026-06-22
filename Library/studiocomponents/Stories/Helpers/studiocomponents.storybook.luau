@@ -1,7 +1,7 @@
 --!nocheck
 
-local React = require(script.Parent.Parent.Parent:FindFirstChild('node_modules'):FindFirstChild('.luau-aliases'):FindFirstChild('@jsdotlua'):FindFirstChild('react'))
-local ReactRoblox = require(script.Parent.Parent.Parent:FindFirstChild('node_modules'):FindFirstChild('.luau-aliases'):FindFirstChild('@jsdotlua'):FindFirstChild('react-roblox'))
+local React = require(script.Parent.Parent.Parent:FindFirstChild('node_modules'):FindFirstChild('luau-aliases'):FindFirstChild('@jsdotlua'):FindFirstChild('react'))
+local ReactRoblox = require(script.Parent.Parent.Parent:FindFirstChild('node_modules'):FindFirstChild('luau-aliases'):FindFirstChild('@jsdotlua'):FindFirstChild('react-roblox'))
 
 return {
 	name = "StudioComponents",

@@ -1,4 +1,4 @@
-local React = require(script.Parent.Parent:FindFirstChild('node_modules'):FindFirstChild('.luau-aliases'):FindFirstChild('@jsdotlua'):FindFirstChild('react'))
+local React = require(script.Parent.Parent:FindFirstChild('node_modules'):FindFirstChild('luau-aliases'):FindFirstChild('@jsdotlua'):FindFirstChild('react'))
 
 local Label = require(script.Parent.Parent:FindFirstChild('Components'):FindFirstChild('Label'))
 local Splitter = require(script.Parent.Parent:FindFirstChild('Components'):FindFirstChild('Splitter'))

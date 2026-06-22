@@ -22,25 +22,24 @@ local widgetInfo = DockWidgetPluginGuiInfo.new(
 local pluginGui = plugin:CreateDockWidgetPluginGui("CodifyMainWidget", widgetInfo)
 pluginGui.Title = "Codify - Reactive UI Converter"
 
--- Basic DockWidget UI Frame
-local mainFrame = Instance.new("Frame")
-mainFrame.Name = "MainFrame"
-mainFrame.Size = UDim2.fromScale(1, 1)
-mainFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-mainFrame.BorderSizePixel = 0
-mainFrame.Parent = pluginGui
+local React = require(script.Parent:WaitForChild("Library"):WaitForChild("Roact"):WaitForChild("React"))
+local ReactRoblox = require(script.Parent:WaitForChild("Library"):WaitForChild("Roact"):WaitForChild("ReactRoblox"))
+local StudioComponents = require(script.Parent:WaitForChild("Library"):WaitForChild("studiocomponents"))
 
-local titleLabel = Instance.new("TextLabel")
-titleLabel.Name = "TitleLabel"
-titleLabel.Text = "Codify is Ready"
-titleLabel.Size = UDim2.new(1, 0, 0, 50)
-titleLabel.Position = UDim2.new(0, 0, 0.5, -25)
-titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-titleLabel.BackgroundTransparency = 1
-titleLabel.Font = Enum.Font.GothamBold
-titleLabel.TextSize = 24
-titleLabel.TextWrapped = true
-titleLabel.Parent = mainFrame
+local App = require(script.Parent:WaitForChild("UI"):WaitForChild("App"))
+
+-- Basic DockWidget UI mounting
+local root = ReactRoblox.createRoot(pluginGui)
+
+local appElement = React.createElement(StudioComponents.PluginProvider, {
+	Plugin = plugin,
+}, {
+	App = React.createElement(App, {
+		plugin = plugin
+	})
+})
+
+root:render(appElement)
 
 -- Toggle logic
 toolbarButton.Click:Connect(function()
@@ -50,3 +49,4 @@ end)
 pluginGui:GetPropertyChangedSignal("Enabled"):Connect(function()
 	toolbarButton:SetActive(pluginGui.Enabled)
 end)
+

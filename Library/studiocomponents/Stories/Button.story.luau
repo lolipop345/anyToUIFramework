@@ -1,4 +1,4 @@
-local React = require(script.Parent.Parent:FindFirstChild('node_modules'):FindFirstChild('.luau-aliases'):FindFirstChild('@jsdotlua'):FindFirstChild('react'))
+local React = require(script.Parent.Parent:FindFirstChild('node_modules'):FindFirstChild('luau-aliases'):FindFirstChild('@jsdotlua'):FindFirstChild('react'))
 
 local Button = require(script.Parent.Parent:FindFirstChild('Components'):FindFirstChild('Button'))
 local createStory = require(script.Parent:FindFirstChild('Helpers'):FindFirstChild('createStory'))

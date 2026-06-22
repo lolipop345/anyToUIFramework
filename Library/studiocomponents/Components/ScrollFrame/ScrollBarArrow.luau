@@ -1,6 +1,6 @@
 local RunService = game:GetService("RunService")
 
-local React = require(script.Parent.Parent.Parent:FindFirstChild('node_modules'):FindFirstChild('.luau-aliases'):FindFirstChild('@jsdotlua'):FindFirstChild('react'))
+local React = require(script.Parent.Parent.Parent:FindFirstChild('node_modules'):FindFirstChild('luau-aliases'):FindFirstChild('@jsdotlua'):FindFirstChild('react'))
 
 local useFreshCallback = require(script.Parent.Parent.Parent:FindFirstChild('Hooks'):FindFirstChild('useFreshCallback'))
 local useTheme = require(script.Parent.Parent.Parent:FindFirstChild('Hooks'):FindFirstChild('useTheme'))

@@ -27,7 +27,7 @@
 	This component is not a modal or dialog box (this should be implemented separately).
 ]=]
 
-local React = require(script.Parent.Parent:FindFirstChild('node_modules'):FindFirstChild('.luau-aliases'):FindFirstChild('@jsdotlua'):FindFirstChild('react'))
+local React = require(script.Parent.Parent:FindFirstChild('node_modules'):FindFirstChild('luau-aliases'):FindFirstChild('@jsdotlua'):FindFirstChild('react'))
 
 local CommonProps = require(script.Parent.Parent:FindFirstChild('CommonProps'))
 local Constants = require(script.Parent.Parent:FindFirstChild('Constants'))

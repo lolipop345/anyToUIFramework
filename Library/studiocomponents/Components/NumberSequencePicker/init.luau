@@ -27,7 +27,7 @@
 	To keep all inputs accessible, it is recommended not to use a smaller size than this.
 ]=]
 
-local React = require(script.Parent.Parent:FindFirstChild('node_modules'):FindFirstChild('.luau-aliases'):FindFirstChild('@jsdotlua'):FindFirstChild('react'))
+local React = require(script.Parent.Parent:FindFirstChild('node_modules'):FindFirstChild('luau-aliases'):FindFirstChild('@jsdotlua'):FindFirstChild('react'))
 
 local CommonProps = require(script.Parent.Parent:FindFirstChild('CommonProps'))
 local Constants = require(script.Parent.Parent:FindFirstChild('Constants'))

@@ -47,7 +47,7 @@
 	to make the component any smaller than this.
 ]=]
 
-local React = require(script.Parent.Parent:FindFirstChild('node_modules'):FindFirstChild('.luau-aliases'):FindFirstChild('@jsdotlua'):FindFirstChild('react'))
+local React = require(script.Parent.Parent:FindFirstChild('node_modules'):FindFirstChild('luau-aliases'):FindFirstChild('@jsdotlua'):FindFirstChild('react'))
 
 local CommonProps = require(script.Parent.Parent:FindFirstChild('CommonProps'))
 local Constants = require(script.Parent.Parent:FindFirstChild('Constants'))
