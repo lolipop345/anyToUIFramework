@@ -10,10 +10,12 @@ function BehaviorAnalyzer.analyze(roots)
 		end
 		
 		local newChildren = {}
-		for _, child in ipairs(node.Children) do
-			local isScript = traverse(child, node)
-			if not isScript then
-				table.insert(newChildren, child)
+		if node.Children then
+			for _, child in ipairs(node.Children) do
+				local isScript = traverse(child, node)
+				if not isScript then
+					table.insert(newChildren, child)
+				end
 			end
 		end
 		node.Children = newChildren

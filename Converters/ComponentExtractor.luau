@@ -105,8 +105,10 @@ function ComponentExtractor.extract(rootNodes)
 		end
 		table.insert(structureGroups[hash], node)
 		
-		for _, child in ipairs(node.Children) do
-			collectCandidates(child)
+		if node.Children then
+			for _, child in ipairs(node.Children) do
+				collectCandidates(child)
+			end
 		end
 	end
 	

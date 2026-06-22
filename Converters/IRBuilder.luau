@@ -4,8 +4,10 @@ local IRBuilder = {}
 
 local function generateStructureHash(node)
 	local parts = {node.ClassName}
-	for _, child in ipairs(node.Children) do
-		table.insert(parts, generateStructureHash(child))
+	if node.Children then
+		for _, child in ipairs(node.Children) do
+			table.insert(parts, generateStructureHash(child))
+		end
 	end
 	return table.concat(parts, "|")
 end
