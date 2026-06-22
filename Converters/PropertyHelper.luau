@@ -66,6 +66,10 @@ end
 
 function PropertyHelper.formatValue(value)
 	local t = typeof(value)
+	if t == "table" and value.Type == "LocalVariable" then
+		return value.Name
+	end
+	
 	if t == "string" then
 		return string.format("%q", value)
 	elseif t == "number" then

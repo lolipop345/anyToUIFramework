@@ -1,6 +1,7 @@
 local PropertyHelper = require(script.Parent:WaitForChild("PropertyHelper"))
 local IRBuilder = require(script.Parent:WaitForChild("IRBuilder"))
 local ComponentExtractor = require(script.Parent:WaitForChild("ComponentExtractor"))
+local ConstantExtractor = require(script.Parent:WaitForChild("ConstantExtractor"))
 
 local LegacyConverter = {}
 
@@ -88,10 +89,18 @@ function LegacyConverter.Convert(instances)
 	end
 	
 	local newRoots, components = ComponentExtractor.extract(rootNodes)
+	local declarations = ConstantExtractor.extract(newRoots, components)
 	
 	local results = {}
 	table.insert(results, "local UIComponents = {}")
 	table.insert(results, "")
+	
+	if #declarations > 0 then
+		for _, decl in ipairs(declarations) do
+			table.insert(results, decl)
+		end
+		table.insert(results, "")
+	end
 	
 	for _, comp in ipairs(components) do
 		table.insert(results, string.format("function UIComponents.%s(props)", comp.Name))

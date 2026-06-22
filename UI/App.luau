@@ -53,6 +53,7 @@ local function App(props)
 					if success then
 						setGeneratedCode(code)
 					else
+						warn("anyToUIFramework Code Generation Error:\n" .. tostring(code))
 						setGeneratedCode("-- Error generating code: " .. tostring(code))
 					end
 				end

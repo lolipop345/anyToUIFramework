@@ -6,11 +6,11 @@ end
 local Images = require(script.Parent:WaitForChild("Images"))
 
 -- Create the Toolbar
-local toolbar = plugin:CreateToolbar("Codify")
+local toolbar = plugin:CreateToolbar("anyToUIFramework")
 
 -- Create the Button
 local toolbarButton = toolbar:CreateButton(
-	"Open Codify",
+	"Open anyToUIFramework",
 	"Convert UI elements to reactive code",
 	Images.ToolbarIcon.Icon
 )
