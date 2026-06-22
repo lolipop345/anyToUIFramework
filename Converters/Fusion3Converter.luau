@@ -13,10 +13,10 @@ local function generateFusion3Code(node, indentLevel)
 	if node.Type == "ComponentCall" then
 		local args = {}
 		for pName, pVal in pairs(node.Props) do
-			table.insert(args, string.format('%s = %s', pName, PropertyHelper.formatValue(pVal)))
+			table.insert(args, string.format('%s%s = %s,', nextIndent, pName, PropertyHelper.formatValue(pVal)))
 		end
 		if #args > 0 then
-			return string.format('%s%s(scope, {\n%s%s\n%s})', indent, node.ComponentName, nextIndent, table.concat(args, ",\n" .. nextIndent), indent)
+			return string.format('%s%s(scope, {\n%s\n%s})', indent, node.ComponentName, table.concat(args, "\n"), indent)
 		else
 			return string.format('%s%s(scope, {})', indent, node.ComponentName)
 		end

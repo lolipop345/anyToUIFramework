@@ -3,10 +3,11 @@ local IRBuilder = require(script.Parent:WaitForChild("IRBuilder"))
 local ComponentExtractor = require(script.Parent:WaitForChild("ComponentExtractor"))
 local ConstantExtractor = require(script.Parent:WaitForChild("ConstantExtractor"))
 
-local LegacyConverter = {}
+local NativeLuauConverter = {}
 
-local function generateLegacyCode(node, indentLevel, parentVarName, uniqueNames, allCode)
+local function generateNativeLuauCode(node, indentLevel, parentVarName, uniqueNames, allCode)
 	local indent = string.rep("\t", indentLevel)
+	local nextIndent = string.rep("\t", indentLevel + 1)
 	
 	if node.Type == "ComponentCall" then
 		local baseName = node.Name:gsub("%W", "")
@@ -21,11 +22,11 @@ local function generateLegacyCode(node, indentLevel, parentVarName, uniqueNames,
 		
 		local args = {}
 		for pName, pVal in pairs(node.Props) do
-			table.insert(args, string.format('%s = %s', pName, PropertyHelper.formatValue(pVal)))
+			table.insert(args, string.format('%s%s = %s,', nextIndent, pName, PropertyHelper.formatValue(pVal)))
 		end
 		
 		if #args > 0 then
-			table.insert(allCode, string.format('%slocal %s = UIComponents.%s({\n\t%s%s\n%s})', indent, varName, node.ComponentName, indent, table.concat(args, ",\n\t" .. indent), indent))
+			table.insert(allCode, string.format('%slocal %s = UIComponents.%s({\n%s\n%s})', indent, varName, node.ComponentName, table.concat(args, "\n"), indent))
 		else
 			table.insert(allCode, string.format('%slocal %s = UIComponents.%s({})', indent, varName, node.ComponentName))
 		end
@@ -68,14 +69,14 @@ local function generateLegacyCode(node, indentLevel, parentVarName, uniqueNames,
 	if #children > 0 then
 		table.insert(allCode, "")
 		for _, child in ipairs(children) do
-			generateLegacyCode(child, indentLevel, varName, uniqueNames, allCode)
+			generateNativeLuauCode(child, indentLevel, varName, uniqueNames, allCode)
 		end
 	end
 	
 	return varName
 end
 
-function LegacyConverter.Convert(instances)
+function NativeLuauConverter.Convert(instances)
 	if typeof(instances) ~= "table" then
 		instances = {instances}
 	end
@@ -106,7 +107,7 @@ function LegacyConverter.Convert(instances)
 		table.insert(results, string.format("function UIComponents.%s(props)", comp.Name))
 		local codeBlocks = {}
 		local uniqueNames = {}
-		local rootVar = generateLegacyCode(comp.RootNode, 1, nil, uniqueNames, codeBlocks)
+		local rootVar = generateNativeLuauCode(comp.RootNode, 1, nil, uniqueNames, codeBlocks)
 		for _, line in ipairs(codeBlocks) do
 			table.insert(results, line)
 		end
@@ -121,7 +122,7 @@ function LegacyConverter.Convert(instances)
 	local codeBlocks = {}
 	local uniqueNames = {}
 	for i, node in ipairs(newRoots) do
-		local rootVar = generateLegacyCode(node, 1, nil, uniqueNames, codeBlocks)
+		local rootVar = generateNativeLuauCode(node, 1, nil, uniqueNames, codeBlocks)
 		table.insert(rootVars, rootVar)
 		if i < #newRoots then
 			table.insert(codeBlocks, "")
@@ -145,4 +146,4 @@ function LegacyConverter.Convert(instances)
 	return table.concat(results, "\n")
 end
 
-return LegacyConverter
+return NativeLuauConverter

@@ -3,6 +3,8 @@ local ComponentExtractor = {}
 local function getBaseName(name)
 	local base = name:match("^(.-)%d*$")
 	if not base or base == "" then return name end
+	-- Capitalize the first letter for proper component naming
+	base = base:sub(1, 1):upper() .. base:sub(2)
 	return base
 end
 
@@ -130,7 +132,7 @@ function ComponentExtractor.extract(rootNodes)
 				traverseDeepCollect(groupNodes, "", diffs, baseProps)
 				
 				-- Create Component Template
-				local compName = "Create" .. baseName
+				local compName = baseName
 				local templateRoot = buildComponentTemplate(groupNodes[1], diffs, "")
 				
 				local paramsList = {}
