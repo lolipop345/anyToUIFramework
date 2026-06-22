@@ -18,13 +18,34 @@ local function App(props)
 	React.useEffect(function()
 		local function updateCode()
 			local selected = Selection:Get()
-			if #selected > 0 then
-				setInstanceName(selected[1].Name)
+			
+			local filteredSelected = {}
+			local selectionSet = {}
+			for _, inst in ipairs(selected) do
+				selectionSet[inst] = true
+			end
+			for _, inst in ipairs(selected) do
+				local isChild = false
+				local current = inst.Parent
+				while current do
+					if selectionSet[current] then
+						isChild = true
+						break
+					end
+					current = current.Parent
+				end
+				if not isChild then
+					table.insert(filteredSelected, inst)
+				end
+			end
+			
+			if #filteredSelected > 0 then
+				setInstanceName(filteredSelected[1].Name)
 				local converter = Converters[selectedConverter]
 				if converter and converter.Convert then
 					local startTime = os.clock()
 					local success, code = pcall(function()
-						return converter.Convert(selected)
+						return converter.Convert(filteredSelected)
 					end)
 					local endTime = os.clock()
 					setGenerationTimeMs(math.floor((endTime - startTime) * 1000))

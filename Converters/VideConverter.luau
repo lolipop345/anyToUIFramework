@@ -80,8 +80,19 @@ function VideConverter.Convert(instances)
 	
 	table.insert(results, "return function()")
 	
+	local rootCodes = {}
 	for _, node in ipairs(newRoots) do
-		table.insert(results, generateVideCode(node, 1))
+		table.insert(rootCodes, generateVideCode(node, 1):sub(2))
+	end
+	
+	if #rootCodes == 1 then
+		table.insert(results, "\treturn " .. rootCodes[1])
+	else
+		table.insert(results, "\treturn {")
+		for _, code in ipairs(rootCodes) do
+			table.insert(results, string.format("\t\t%s,", code))
+		end
+		table.insert(results, "\t}")
 	end
 	
 	table.insert(results, "end")

@@ -35,10 +35,32 @@ local function PreviewTab(props)
 				end
 			end
 			
+			local selected = Selection:Get()
+			
+			-- Filter selection to avoid duplicate cloning when parent and child are both selected
+			local filteredSelected = {}
+			local selectionSet = {}
+			for _, inst in ipairs(selected) do
+				selectionSet[inst] = true
+			end
+			for _, inst in ipairs(selected) do
+				local isChild = false
+				local current = inst.Parent
+				while current do
+					if selectionSet[current] then
+						isChild = true
+						break
+					end
+					current = current.Parent
+				end
+				if not isChild then
+					table.insert(filteredSelected, inst)
+				end
+			end
+			
 			-- Clone selected items into the container
 			local found = false
-			local selected = Selection:Get()
-			for _, inst in ipairs(selected) do
+			for _, inst in ipairs(filteredSelected) do
 				if inst:IsA("GuiObject") then
 					local clone = inst:Clone()
 					clone.Parent = container

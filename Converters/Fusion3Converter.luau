@@ -85,7 +85,16 @@ function Fusion3Converter.Convert(instances)
 		table.insert(rootCodes, generateFusion3Code(node, 1):sub(2))
 	end
 	
-	table.insert(results, "\treturn " .. table.concat(rootCodes, ",\n\t\t"))
+	if #rootCodes == 1 then
+		table.insert(results, "\treturn " .. rootCodes[1])
+	else
+		table.insert(results, "\treturn {")
+		for _, code in ipairs(rootCodes) do
+			table.insert(results, string.format("\t\t%s,", code))
+		end
+		table.insert(results, "\t}")
+	end
+	
 	table.insert(results, "end")
 	return table.concat(results, "\n")
 end

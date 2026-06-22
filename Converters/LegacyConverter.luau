@@ -127,7 +127,7 @@ function LegacyConverter.Convert(instances)
 	if #rootVars == 1 then
 		table.insert(results, "\treturn " .. rootVars[1])
 	else
-		table.insert(results, "\treturn " .. table.concat(rootVars, ", "))
+		table.insert(results, "\treturn {" .. table.concat(rootVars, ", ") .. "}")
 	end
 	
 	table.insert(results, "end")

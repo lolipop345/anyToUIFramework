@@ -106,7 +106,17 @@ function RoactConverter.Convert(instances)
 		table.insert(rootCodes, generateRoactCode(node, 1, {}):sub(2))
 	end
 	
-	table.insert(results, "\treturn " .. table.concat(rootCodes, ",\n\t\t"))
+	if #rootCodes == 1 then
+		table.insert(results, "\treturn " .. rootCodes[1])
+	else
+		table.insert(results, "\treturn Roact.createFragment({")
+		for i, code in ipairs(rootCodes) do
+			local key = newRoots[i].Name or ("Item" .. tostring(i))
+			table.insert(results, string.format("\t\t[%q] = %s,", key, code))
+		end
+		table.insert(results, "\t})")
+	end
+	
 	table.insert(results, "end")
 	return table.concat(results, "\n")
 end
