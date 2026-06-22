@@ -4,9 +4,22 @@ local Highlighter = require(script.Parent.Parent.Library.Highlighter)
 local usePlugin = require(script.Parent.Parent.Library.studiocomponents.Hooks.usePlugin)
 
 local function CodeEditor(props)
+	local theme = StudioComponents.useTheme()
+	
+	local code = props.Code or ""
+	local displayCode = code
+	if #displayCode > 150000 then
+		displayCode = string.sub(displayCode, 1, 150000) .. "\n\n-- [WARNING: Code truncated for UI preview due to length limits. Use 'Export' to view full source.]"
+	end
+	
 	local richTextLines = React.useMemo(function()
 		return Highlighter.buildRichTextLines({ src = displayCode })
 	end, {displayCode})
+	
+	local instanceName = props.InstanceName or "ScreenGui"
+	local converterName = props.ConverterName or "Roact"
+	local generationTimeMs = props.GenerationTimeMs or 0
+	local plugin = usePlugin()
 	
 	local contentChildren = {
 		Padding = React.createElement("UIPadding", {
